@@ -100,6 +100,25 @@ const determineSupportedHomeKitAccessories = (
         ]),
     )
     .when(
+      ([type, ops]) => {
+        const nameLower = device.displayName.toLowerCase();
+        const typeLower = device.deviceType.toLowerCase();
+        return (
+          type === 'SWITCH' &&
+          (nameLower.includes('fan') || typeLower.includes('fan')) &&
+          supportsRequiredActions(FanAccessory.requiredOperations, ops)
+        );
+      },
+      () =>
+        E.of([
+          {
+            altDeviceName: O.none,
+            deviceType: platform.Service.Fanv2.UUID,
+            uuid: generateUuid(platform, entityId, device.deviceType),
+          },
+        ]),
+    )
+    .when(
       ([type, ops]) =>
         type === 'SMARTLOCK' &&
         supportsRequiredActions(LockAccessory.requiredOperations, ops),

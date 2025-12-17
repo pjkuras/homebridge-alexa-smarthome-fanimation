@@ -140,7 +140,8 @@ export const extractStates = (
           (f) => {
             // Check if this range feature is for percentage
             const instance = f.instance?.toLowerCase();
-            const rangeName = f.configuration?.friendlyName?.value?.text?.toLowerCase();
+            const rangeName =
+              f.configuration?.friendlyName?.value?.text?.toLowerCase();
             const propertyName = f.properties[0]?.name?.toLowerCase();
             if (
               instance === 'percentage' ||

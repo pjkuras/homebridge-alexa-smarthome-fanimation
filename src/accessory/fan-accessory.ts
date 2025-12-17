@@ -22,6 +22,17 @@ export default class FanAccessory extends BaseAccessory {
       .getCharacteristic(this.Characteristic.Active)
       .onGet(this.handleActiveGet.bind(this))
       .onSet(this.handleActiveSet.bind(this));
+
+    if (
+      this.device.supportedOperations.includes('setPercentage') ||
+      this.device.supportedOperations.includes('adjustPercentage') ||
+      this.device.supportedOperations.includes('rampPercentage')
+    ) {
+      this.service
+        .getCharacteristic(this.Characteristic.RotationSpeed)
+        .onGet(this.handleRotationSpeedGet.bind(this))
+        .onSet(this.handleRotationSpeedSet.bind(this));
+    }
   }
 
   async handleActiveGet(): Promise<boolean> {
@@ -69,6 +80,80 @@ export default class FanAccessory extends BaseAccessory {
               this.Characteristic,
             ),
             featureName: 'power',
+          });
+        },
+      ),
+    )();
+  }
+
+  async handleRotationSpeedGet(): Promise<number> {
+    const determinePercentageState = flow(
+      A.findFirst<FanState>(({ featureName }) => featureName === 'percentage'),
+      O.flatMap(({ value }) => {
+        if (typeof value === 'number') {
+          return O.of(value);
+        }
+        if (typeof value === 'string') {
+          const parsed = parseFloat(value);
+          return isNaN(parsed) ? O.none : O.of(parsed);
+        }
+        return O.none;
+      }),
+      O.tap((s) =>
+        O.of(this.logWithContext('debug', `Get rotation speed result: ${s}%`)),
+      ),
+    );
+
+    return pipe(
+      this.getStateGraphQl(determinePercentageState),
+      TE.match((e) => {
+        this.logWithContext('errorT', 'Get rotation speed', e);
+        throw this.serviceCommunicationError;
+      }, identity),
+    )();
+  }
+
+  async handleRotationSpeedSet(value: CharacteristicValue): Promise<void> {
+    this.logWithContext('debug', `Triggered set rotation speed: ${value}`);
+    if (typeof value !== 'number') {
+      throw this.invalidValueError;
+    }
+
+    // Clamp value to 0-100 range
+    const clampedValue = Math.max(0, Math.min(100, value));
+    const percentageValue = clampedValue.toString(10);
+
+    // Determine which action to use based on device capabilities
+    // Prefer setPercentage, then adjustPercentage, then rampPercentage
+    let action: SupportedActionsType;
+    if (this.device.supportedOperations.includes('setPercentage')) {
+      action = 'setPercentage';
+    } else if (this.device.supportedOperations.includes('adjustPercentage')) {
+      action = 'adjustPercentage';
+    } else if (this.device.supportedOperations.includes('rampPercentage')) {
+      action = 'rampPercentage';
+    } else {
+      throw this.invalidValueError;
+    }
+
+    return pipe(
+      this.platform.alexaApi.setDeviceStateGraphQl(
+        this.device.endpointId,
+        'percentage',
+        action,
+        {
+          percentage: percentageValue,
+        },
+      ),
+      TE.match(
+        (e) => {
+          this.logWithContext('errorT', 'Set rotation speed', e);
+          throw this.serviceCommunicationError;
+        },
+        () => {
+          this.updateCacheValue({
+            value: percentageValue,
+            featureName: 'percentage',
           });
         },
       ),

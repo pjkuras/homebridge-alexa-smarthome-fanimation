@@ -38,7 +38,7 @@ export const validateConfig = (
       (c) =>
         isMatching(
           {
-            platform: 'HomebridgeAlexaSmartHome',
+            platform: 'HomebridgeAlexaSmartHomeFanimation',
             devices: Pattern.optional(Pattern.array(Pattern.string)),
             excludeDevices: Pattern.optional(Pattern.array(Pattern.string)),
             amazonDomain: Pattern.optional(Pattern.string),

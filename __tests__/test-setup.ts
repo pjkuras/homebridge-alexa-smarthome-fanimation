@@ -35,7 +35,7 @@ global.createPlatform = (): AlexaSmartHomePlatform => {
 };
 
 global.createPlatformConfig = (): AlexaPlatformConfig => ({
-  platform: 'HomebridgeAlexaSmartHome',
+  platform: 'HomebridgeAlexaSmartHomeFanimation',
   devices: [],
   excludeDevices: [],
   amazonDomain: 'amazon.com',

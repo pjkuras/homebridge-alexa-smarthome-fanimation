@@ -1,5 +1,5 @@
-export const PLATFORM_NAME = 'HomebridgeAlexaSmartHome';
-export const PLUGIN_NAME = 'homebridge-alexa-smarthome';
+export const PLATFORM_NAME = 'HomebridgeAlexaSmartHomeFanimation';
+export const PLUGIN_NAME = 'homebridge-alexa-smarthome-fanimation';
 
 export const DEFAULT_AMAZON_DOMAIN = 'amazon.com';
 export const DEFAULT_REFRESH_INTERVAL_DAYS = 4;

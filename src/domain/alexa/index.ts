@@ -74,6 +74,7 @@ export const SupportedActions = {
   setThermostatMode: 'setThermostatMode',
   setPercentage: 'setPercentage',
   rampPercentage: 'rampPercentage',
+  adjustPercentage: 'adjustPercentage',
 } as const;
 
 export type SupportedActionsType = keyof typeof SupportedActions;

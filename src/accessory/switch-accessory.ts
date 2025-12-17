@@ -104,13 +104,10 @@ export default class SwitchAccessory extends BaseAccessory {
 
     return pipe(
       this.getStateGraphQl(determinePercentageState),
-      TE.match(
-        (e) => {
-          this.logWithContext('errorT', 'Get percentage', e);
-          throw this.serviceCommunicationError;
-        },
-        identity,
-      ),
+      TE.match((e) => {
+        this.logWithContext('errorT', 'Get percentage', e);
+        throw this.serviceCommunicationError;
+      }, identity),
     )();
   }
 
@@ -125,11 +122,10 @@ export default class SwitchAccessory extends BaseAccessory {
     const percentageValue = clampedValue.toString(10);
 
     // Check if device supports setPercentage or rampPercentage
-    const action: SupportedActionsType = this.device.supportedOperations.includes(
-      'setPercentage',
-    )
-      ? 'setPercentage'
-      : 'rampPercentage';
+    const action: SupportedActionsType =
+      this.device.supportedOperations.includes('setPercentage')
+        ? 'setPercentage'
+        : 'rampPercentage';
 
     return pipe(
       this.platform.alexaApi.setDeviceStateGraphQl(
