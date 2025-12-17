@@ -72,6 +72,8 @@ export const SupportedActions = {
   setTargetSetpoint: 'setTargetSetpoint',
   adjustTargetSetpoint: 'adjustTargetSetpoint',
   setThermostatMode: 'setThermostatMode',
+  setPercentage: 'setPercentage',
+  rampPercentage: 'rampPercentage',
 } as const;
 
 export type SupportedActionsType = keyof typeof SupportedActions;
@@ -86,6 +88,7 @@ export const SupportedFeatures = {
   temperatureSensor: 'temperatureSensor',
   thermostat: 'thermostat',
   toggle: 'toggle',
+  percentage: 'percentage',
 } as const;
 
 export type SupportedFeatures = keyof typeof SupportedFeatures;
