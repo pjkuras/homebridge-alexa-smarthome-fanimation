@@ -1,15 +1,15 @@
 {
-  "displayName": "Homebridge Alexa Smart Home (Fanimation Custom)",
-  "name": "homebridge-alexa-smarthome-fanimation",
+  "displayName": "Homebridge Alexa Smart Home",
+  "name": "homebridge-alexa-smarthome",
   "version": "2.4.0",
   "private": "true",
   "description": "Homebridge plugin that can control smart home devices connected to Alexa.",
   "license": "MIT",
   "author": "Joey Hage <contact@jmhage.com>",
-  "homepage": "https://github.com/pjkuras/homebridge-alexa-smarthome-fanimation#readme",
+  "homepage": "https://github.com/pjkuras/homebridge-alexa-smarthome#readme",
   "repository": {
     "type": "git",
-    "url": "git://github.com/pjkuras/homebridge-alexa-smarthome-fanimation.git"
+    "url": "git://github.com/pjkuras/homebridge-alexa-smarthome.git"
   },
   "bugs": {
     "url": "https://github.com/joeyhage/homebridge-alexa-smarthome/issues"

@@ -14,7 +14,7 @@
       "platform": "config"
     },
     {
-      "platform": "HomebridgeAlexaSmartHomeFanimation",
+      "platform": "HomebridgeAlexaSmartHome",
       "amazonDomain": "amazon.com",
       "auth": {
         "cookie": "",
