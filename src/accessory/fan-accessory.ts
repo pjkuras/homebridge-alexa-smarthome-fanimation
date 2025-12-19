@@ -94,7 +94,10 @@ export default class FanAccessory extends BaseAccessory {
       const powerValue = cachedPower.value;
       const isFanActive = powerValue === 'ON' || powerValue === true;
       if (!isFanActive) {
-        this.logWithContext('debug', 'Fan is off (from cache), returning rotation speed 0');
+        this.logWithContext(
+          'debug',
+          'Fan is off (from cache), returning rotation speed 0',
+        );
         return 0;
       }
     } else {
@@ -103,7 +106,10 @@ export default class FanAccessory extends BaseAccessory {
       try {
         const isFanActive = await this.handleActiveGet();
         if (!isFanActive) {
-          this.logWithContext('debug', 'Fan is off, returning rotation speed 0');
+          this.logWithContext(
+            'debug',
+            'Fan is off, returning rotation speed 0',
+          );
           return 0;
         }
       } catch (e) {
@@ -135,26 +141,24 @@ export default class FanAccessory extends BaseAccessory {
           this.device.supportedOperations.includes('adjustPercentage') ||
           this.device.supportedOperations.includes('rampPercentage')
         ) {
-          const rangeFeature = A.findFirst<CapabilityState>(
-            (state) => {
-              if (state.featureName === 'range') {
-                const instance = state.instance?.toLowerCase() || '';
-                const rangeName = state.rangeName?.toLowerCase() || '';
-                // Exclude known non-percentage range features
-                return (
-                  !instance.includes('humidity') &&
-                  !instance.includes('temperature') &&
-                  !instance.includes('air') &&
-                  !instance.includes('co') &&
-                  !rangeName.includes('humidity') &&
-                  !rangeName.includes('temperature') &&
-                  !rangeName.includes('air') &&
-                  !rangeName.includes('co')
-                );
-              }
-              return false;
-            },
-          )(states);
+          const rangeFeature = A.findFirst<CapabilityState>((state) => {
+            if (state.featureName === 'range') {
+              const instance = state.instance?.toLowerCase() || '';
+              const rangeName = state.rangeName?.toLowerCase() || '';
+              // Exclude known non-percentage range features
+              return (
+                !instance.includes('humidity') &&
+                !instance.includes('temperature') &&
+                !instance.includes('air') &&
+                !instance.includes('co') &&
+                !rangeName.includes('humidity') &&
+                !rangeName.includes('temperature') &&
+                !rangeName.includes('air') &&
+                !rangeName.includes('co')
+              );
+            }
+            return false;
+          })(states);
           if (O.isSome(rangeFeature)) {
             // Treat this range feature as percentage for fan devices
             return O.of({
@@ -182,34 +186,37 @@ export default class FanAccessory extends BaseAccessory {
 
     return pipe(
       this.getStateGraphQl<CapabilityState, number>(determinePercentageState),
-      TE.match(
-        (e) => {
-          this.logWithContext('errorT', 'Get rotation speed', e);
-          // If percentage state is not available, try to get from cache
-          const cachedValue = this.getCacheValue('percentage');
-          if (O.isSome(cachedValue)) {
-            const value = cachedValue.value;
-            if (typeof value === 'number') {
-              this.logWithContext('debug', `Using cached percentage value: ${value}%`);
-              return value;
-            }
-            if (typeof value === 'string') {
-              const parsed = parseFloat(value);
-              if (!isNaN(parsed)) {
-                this.logWithContext('debug', `Using cached percentage value: ${parsed}%`);
-                return parsed;
-              }
+      TE.match((e) => {
+        this.logWithContext('errorT', 'Get rotation speed', e);
+        // If percentage state is not available, try to get from cache
+        const cachedValue = this.getCacheValue('percentage');
+        if (O.isSome(cachedValue)) {
+          const value = cachedValue.value;
+          if (typeof value === 'number') {
+            this.logWithContext(
+              'debug',
+              `Using cached percentage value: ${value}%`,
+            );
+            return value;
+          }
+          if (typeof value === 'string') {
+            const parsed = parseFloat(value);
+            if (!isNaN(parsed)) {
+              this.logWithContext(
+                'debug',
+                `Using cached percentage value: ${parsed}%`,
+              );
+              return parsed;
             }
           }
-          // If no cached value, return 0 as default (fan is off)
-          this.logWithContext(
-            'debug',
-            'Percentage state not available, returning default value 0',
-          );
-          return 0;
-        },
-        identity,
-      ),
+        }
+        // If no cached value, return 0 as default (fan is off)
+        this.logWithContext(
+          'debug',
+          'Percentage state not available, returning default value 0',
+        );
+        return 0;
+      }, identity),
     )();
   }
 

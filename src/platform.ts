@@ -24,7 +24,7 @@ import AccessoryFactory from './accessory/accessory-factory';
 import BaseAccessory from './accessory/base-accessory';
 import { AlexaDeviceError, AlexaError } from './domain/alexa/errors';
 import { SmartHomeDevice } from './domain/alexa/get-devices';
-import { AlexaPlatformConfig, DeviceConfig } from './domain/homebridge';
+import { AlexaPlatformConfig } from './domain/homebridge';
 import { mapAlexaDeviceToHomeKitAccessoryInfos } from './mapper';
 import * as settings from './settings';
 import DeviceStore from './store/device-store';

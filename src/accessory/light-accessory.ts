@@ -127,20 +127,20 @@ export default class LightAccessory extends BaseAccessory {
         }),
         O.tap((s) =>
           O.of(
-            this.logWithContext('debug', `Get brightness (from percentage) result: ${s}`),
+            this.logWithContext(
+              'debug',
+              `Get brightness (from percentage) result: ${s}`,
+            ),
           ),
         ),
       );
 
       return pipe(
         this.getStateGraphQl(determinePercentageState),
-        TE.match(
-          (e) => {
-            this.logWithContext('errorT', 'Get brightness', e);
-            throw this.serviceCommunicationError;
-          },
-          identity,
-        ),
+        TE.match((e) => {
+          this.logWithContext('errorT', 'Get brightness', e);
+          throw this.serviceCommunicationError;
+        }, identity),
       )();
     }
 

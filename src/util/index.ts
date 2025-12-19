@@ -15,7 +15,7 @@ import {
 } from 'fp-ts/lib/function';
 import fs from 'fs';
 import type { PlatformConfig } from 'homebridge';
-import { Pattern, isMatching, match } from 'ts-pattern';
+import { Pattern, match } from 'ts-pattern';
 import { Authentication } from '../domain/alexa';
 import { AlexaDeviceError } from '../domain/alexa/errors';
 import type { AlexaPlatformConfig } from '../domain/homebridge';
