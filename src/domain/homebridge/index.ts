@@ -9,9 +9,14 @@ export interface HomebridgeAccessoryInfo {
   altDeviceName: Option<string>;
 }
 
+export interface DeviceConfig {
+  name: string;
+  mapToFan?: boolean;
+}
+
 export interface AlexaPlatformConfig extends PlatformConfig {
   platform: 'HomebridgeAlexaSmartHome';
-  devices: Nullable<string[]>;
+  devices: Nullable<(string | DeviceConfig)[]>;
   excludeDevices: Nullable<string[]>;
   amazonDomain: Nullable<AmazonDomain>;
   language: Nullable<string>;

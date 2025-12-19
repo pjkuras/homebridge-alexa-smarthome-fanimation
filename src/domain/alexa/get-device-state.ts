@@ -155,6 +155,9 @@ export const extractStates = (
                 featureName: 'percentage' as const,
               } as CapabilityState);
             }
+            // For devices that support percentage operations, if there's no explicit percentage identifier
+            // but this is the only range feature, it might be percentage
+            // This will be handled by checking device capabilities in the accessory
             // Regular range feature
             return O.of({
               ...withCommonProps(f),

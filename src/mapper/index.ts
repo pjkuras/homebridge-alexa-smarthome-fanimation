@@ -27,6 +27,7 @@ export const mapAlexaDeviceToHomeKitAccessoryInfos = (
   platform: AlexaSmartHomePlatform,
   entityId: string,
   device: SmartHomeDevice,
+  mapToFan?: boolean,
 ): Either<AlexaDeviceError, HomebridgeAccessoryInfo[]> => {
   return pipe(
     validateDevice(device),
@@ -41,6 +42,7 @@ export const mapAlexaDeviceToHomeKitAccessoryInfos = (
         entityId,
         device,
         rangeFeatures,
+        mapToFan,
       ),
     ),
   );
@@ -70,6 +72,7 @@ const determineSupportedHomeKitAccessories = (
   entityId: string,
   device: SmartHomeDevice,
   rangeFeatures: RangeFeatures,
+  mapToFan?: boolean,
 ): Either<AlexaDeviceError, HomebridgeAccessoryInfo[]> =>
   match([device.deviceType, device.supportedOperations])
     .when(
@@ -81,6 +84,20 @@ const determineSupportedHomeKitAccessories = (
           {
             altDeviceName: O.none,
             deviceType: platform.Service.Lightbulb.UUID,
+            uuid: generateUuid(platform, entityId, device.deviceType),
+          },
+        ]),
+    )
+    .when(
+      ([type, ops]) =>
+        type === 'SWITCH' &&
+        mapToFan === true &&
+        supportsRequiredActions(FanAccessory.requiredOperations, ops),
+      () =>
+        E.of([
+          {
+            altDeviceName: O.none,
+            deviceType: platform.Service.Fanv2.UUID,
             uuid: generateUuid(platform, entityId, device.deviceType),
           },
         ]),
@@ -100,20 +117,16 @@ const determineSupportedHomeKitAccessories = (
         ]),
     )
     .when(
-      ([type, ops]) => {
-        const nameLower = device.displayName.toLowerCase();
-        const typeLower = device.deviceType.toLowerCase();
-        return (
-          type === 'SWITCH' &&
-          (nameLower.includes('fan') || typeLower.includes('fan')) &&
-          supportsRequiredActions(FanAccessory.requiredOperations, ops)
-        );
-      },
+      ([type, ops]) =>
+        type === 'SWITCH' &&
+        (ops.includes(SupportedActions.setPercentage) ||
+          ops.includes(SupportedActions.adjustPercentage)) &&
+        supportsRequiredActions(LightAccessory.requiredOperations, ops),
       () =>
         E.of([
           {
             altDeviceName: O.none,
-            deviceType: platform.Service.Fanv2.UUID,
+            deviceType: platform.Service.Lightbulb.UUID,
             uuid: generateUuid(platform, entityId, device.deviceType),
           },
         ]),
